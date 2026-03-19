@@ -3,91 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>유리의 메모장</title>
+  <title>유리우 업무</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; padding: 24px 16px; max-width: 720px; margin: 0 auto; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0d0f; color: #e5e5e7; padding: 24px 16px; max-width: 720px; margin: 0 auto; }
+
     #lock-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; }
-    #lock-screen h2 { font-size: 1.3rem; color: #1d1d1f; }
+    #lock-screen h2 { font-size: 1.3rem; color: #e5e5e7; }
     #lock-screen p { font-size: 0.88rem; color: #6e6e73; }
-    #pw-input { padding: 12px 16px; border: 1.5px solid #d2d2d7; border-radius: 10px; font-size: 1rem; width: 240px; outline: none; text-align: center; letter-spacing: 0.1em; }
-    #pw-input:focus { border-color: #0071e3; }
-    #pw-btn { background: #1d1d1f; color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 0.95rem; cursor: pointer; width: 240px; }
+    #pw-input { padding: 12px 16px; border: 1.5px solid #3a3a3c; background: #1c1c1e; color: #e5e5e7; border-radius: 10px; font-size: 1rem; width: 240px; outline: none; text-align: center; letter-spacing: 0.1em; }
+    #pw-input:focus { border-color: #0a84ff; }
+    #pw-btn { background: #2c2c2e; color: #e5e5e7; border: none; border-radius: 10px; padding: 12px 32px; font-size: 0.95rem; cursor: pointer; width: 240px; transition: background 0.2s; }
     #pw-btn:hover { background: #3a3a3c; }
-    #pw-error { color: #e53e3e; font-size: 0.85rem; display: none; }
+    #pw-error { color: #ff453a; font-size: 0.85rem; display: none; }
     #content { display: none; }
-    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; }
-    .section { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
-    .section-title { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6e6e73; margin-bottom: 14px; }
-    .summary { background: #1d1d1f; color: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-    .summary .section-title { color: #a1a1a6; }
-    .summary-item { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; margin-top: 6px; }
-    .badge-dday { background: #ff453a; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-    .schedule-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; color: #f5f5f7; }
+
+    .section { background: #1c1c1e; border-radius: 14px; padding: 20px; margin-bottom: 14px; border: 1px solid #2c2c2e; }
+    .section-title { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #636366; margin-bottom: 14px; }
+
+    .summary { background: #141416; border: 1px solid #2c2c2e; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+    .summary .section-title { color: #48484a; }
+    .summary-content { font-size: 0.95rem; color: #aeaeb2; margin-top: 4px; }
+    .summary-item { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .badge-dday { background: #ff453a; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+    .schedule-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2c2c2e; }
     .schedule-item:last-child { border-bottom: none; }
-    .dday { min-width: 52px; text-align: center; font-size: 0.78rem; font-weight: 700; color: #fff; background: #1d1d1f; border-radius: 8px; padding: 3px 6px; }
-    .dday.soon { background: #ff453a; }
-    .schedule-text { flex: 1; }
-    .schedule-date { font-size: 0.78rem; color: #6e6e73; margin-top: 2px; }
-    .todo-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .dday { min-width: 50px; text-align: center; font-size: 0.72rem; font-weight: 700; color: #aeaeb2; background: #2c2c2e; border-radius: 8px; padding: 3px 6px; }
+    .dday.soon { background: #3d1f1f; color: #ff6b6b; }
+    .schedule-text { flex: 1; font-size: 0.92rem; color: #e5e5e7; }
+    .schedule-date { font-size: 0.75rem; color: #636366; margin-top: 3px; }
+
+    .todo-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2c2c2e; }
     .todo-item:last-child { border-bottom: none; }
-    .todo-item.done { opacity: 0.4; }
+    .todo-item.done { opacity: 0.3; }
     .todo-item.done .todo-text { text-decoration: line-through; }
-    .priority { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
-    .priority.urgent { background: #ffe5e5; color: #e53e3e; }
-    .priority.normal { background: #fff8e0; color: #b7791f; }
-    .priority.low { background: #e6f7ee; color: #276749; }
-    .priority.done-badge { background: #f0f0f0; color: #aaa; }
-    .todo-text { flex: 1; font-size: 0.95rem; }
-    .todo-deadline { font-size: 0.78rem; color: #6e6e73; margin-top: 2px; }
-    .status-done { font-size: 1rem; color: #30d158; margin-top: 2px; }
-    .idea-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; align-items: flex-start; }
+    .priority { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
+    .priority.urgent { background: #3d1f1f; color: #ff6b6b; }
+    .priority.normal { background: #2d2510; color: #ffd60a; }
+    .priority.low { background: #1a2d1f; color: #30d158; }
+    .priority.done-badge { background: #2c2c2e; color: #48484a; }
+    .todo-text { flex: 1; font-size: 0.92rem; color: #e5e5e7; }
+    .todo-deadline { font-size: 0.75rem; color: #636366; margin-top: 3px; }
+    .status-done { font-size: 0.95rem; color: #30d158; margin-top: 2px; }
+
+    .idea-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2c2c2e; align-items: flex-start; }
     .idea-item:last-child { border-bottom: none; }
-    .idea-date { font-size: 0.78rem; color: #6e6e73; white-space: nowrap; margin-top: 2px; }
-    .idea-text { flex: 1; font-size: 0.95rem; }
-    .empty { color: #aaa; font-size: 0.9rem; }
-    .footer { text-align: center; font-size: 0.78rem; color: #aaa; margin-top: 12px; margin-bottom: 24px; }
+    .idea-date { font-size: 0.75rem; color: #636366; white-space: nowrap; margin-top: 2px; }
+    .idea-text { flex: 1; font-size: 0.92rem; color: #e5e5e7; }
+
+    .empty { color: #48484a; font-size: 0.88rem; }
+    .footer { text-align: center; font-size: 0.72rem; color: #3a3a3c; margin-top: 12px; margin-bottom: 6px; }
+    .hint { text-align: center; font-size: 0.68rem; color: #2c2c2e; margin-bottom: 24px; line-height: 1.6; }
   </style>
 </head>
 <body>
   <div id="lock-screen">
-    <h2>🔒 유리의 메모장</h2>
+    <h2>🔒 유리우 업무</h2>
     <p>비밀번호를 입력하세요</p>
     <input type="password" id="pw-input" placeholder="비밀번호" onkeydown="if(event.key==='Enter') checkPw()" />
     <button id="pw-btn" onclick="checkPw()">확인</button>
     <span id="pw-error">비밀번호가 올바르지 않아요</span>
   </div>
+
   <div id="content">
-    <h1>유리의 메모장</h1>
+    <h1>유리우 업무</h1>
+
     <div class="summary">
       <div class="section-title">📌 오늘 요약 · 2026-03-19</div>
-      <div class="summary-item"><span class="badge-dday">D-1</span><span>쇼핑탭 TF 미팅 (3/20 금 오전 10시)</span></div>
+      <div class="summary-item"><span class="badge-dday">D-1</span><span class="summary-content">쇼핑탭 TF 미팅 (3/20 금 오전 10시)</span></div>
     </div>
+
     <div class="section">
       <div class="section-title">📅 일정</div>
       <div class="schedule-item"><div class="dday soon">D-1</div><div class="schedule-text">쇼핑탭 TF 미팅<div class="schedule-date">매주 화 · 금 오전 10시 🔁</div></div></div>
       <div class="schedule-item"><div class="dday">D-35</div><div class="schedule-text">쇼핑탭 개발팀과의 저녁 회식<div class="schedule-date">4/23 (목)</div></div></div>
     </div>
+
     <div class="section">
       <div class="section-title">✅ 할 일</div>
       <div class="todo-item"><span class="priority urgent">상</span><div class="todo-text">테스트 진행<div class="todo-deadline">오늘 3/19</div></div></div>
       <div class="todo-item"><span class="priority normal">보통</span><div class="todo-text">VD 경유 쇼핑 태그 확장<div class="todo-deadline">그룹장님 3/17</div></div></div>
       <div class="todo-item"><span class="priority normal">보통</span><div class="todo-text">QA 알림 버튼 제거</div></div>
-      <div class="todo-item done"><span class="priority done-badge">완료</span><div class="todo-text"><a href="https://jira.skplanet.com/browse/OCBWEBVIEW-6458" style="color:#aaa;">QA · OCBWEBVIEW-6458</a></div><span class="status-done">✔</span></div>
+      <div class="todo-item done"><span class="priority done-badge">완료</span><div class="todo-text"><a href="https://jira.skplanet.com/browse/OCBWEBVIEW-6458" style="color:#48484a;">QA · OCBWEBVIEW-6458</a></div><span class="status-done">✔</span></div>
     </div>
-    <div class="section"><div class="section-title">📝 회의록</div><p class="empty">아직 없음</p></div>
+
+    <div class="section">
+      <div class="section-title">📝 회의록</div>
+      <p class="empty">아직 없음</p>
+    </div>
+
     <div class="section">
       <div class="section-title">💡 아이디어</div>
       <div class="idea-item"><span class="idea-date">3/19</span><span class="idea-text">Opus 4.6 / Codex / Open Claw / Claude Code</span></div>
     </div>
+
     <p class="footer">업데이트 · 2026-03-19</p>
-    <p style="text-align:center;font-size:0.7rem;color:#c7c7cc;margin-bottom:20px;">입력: 아이디어: · 할일: · 급!할일: · 완료: · 일정: · 회의: | 마감 ~날짜 · 우선순위 [상/중/하]</p>
+    <p class="hint">입력: 아이디어: · 할일: · 급!할일: · 완료: · 일정: · 회의: &nbsp;|&nbsp; 마감 ~날짜 · 우선순위 [상/중/하]</p>
   </div>
+
   <script>
-    const HASH='d23e1849de063ccecea28ceebfabe1569ad078f6540e4432da7fd9280d96cd7e';
-    async function hashPw(pw){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-    async function checkPw(){const input=document.getElementById('pw-input').value;const h=await hashPw(input);if(h===HASH){document.getElementById('lock-screen').style.display='none';document.getElementById('content').style.display='block';sessionStorage.setItem('unlocked','1')}else{document.getElementById('pw-error').style.display='block';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus()}}
-    if(sessionStorage.getItem('unlocked')==='1'){document.getElementById('lock-screen').style.display='none';document.getElementById('content').style.display='block'}
+    const HASH = '62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a';
+    async function hashPw(pw) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    async function checkPw() {
+      const input = document.getElementById('pw-input').value;
+      const h = await hashPw(input);
+      if (h === HASH) {
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        sessionStorage.setItem('unlocked', '1');
+      } else {
+        document.getElementById('pw-error').style.display = 'block';
+        document.getElementById('pw-input').value = '';
+        document.getElementById('pw-input').focus();
+      }
+    }
+    if (sessionStorage.getItem('unlocked') === '1') {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }
   </script>
 </body>
 </html>
