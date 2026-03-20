@@ -43,8 +43,8 @@
 
     .todo-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2c2c2e; }
     .todo-item:last-child { border-bottom: none; }
-    .todo-item.done { opacity: 0.3; }
-    .todo-item.done .todo-text { text-decoration: line-through; }
+    .todo-item.done .todo-text { text-decoration: line-through; color: #636366; }
+    .todo-item.done .priority.done-badge { background: #2c2c2e; color: #48484a; }
     .priority { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
     .priority.urgent { background: #3d1f1f; color: #ff6b6b; }
     .priority.normal { background: #2d2510; color: #ffd60a; }
@@ -98,12 +98,12 @@
 
     <div class="summary">
       <div class="section-title">📌 오늘 요약 · 2026-03-20</div>
-      <div class="summary-item"><span class="badge-dday">D-0</span><span class="summary-content">쇼핑탭 TF 미팅 오늘! (금 오전 10시)</span></div>
+      <div class="summary-item"><span class="badge-dday">D-Day</span><span class="summary-content">쇼핑탭 TF 미팅 오늘! (금 오전 10시)</span></div>
     </div>
 
     <div class="section">
       <div class="section-title">📅 일정</div>
-      <div class="schedule-item"><div class="dday soon">D-0</div><div class="schedule-text">쇼핑탭 TF 미팅<div class="schedule-date">매주 화 · 금 오전 10시 🔁</div></div></div>
+      <div class="schedule-item"><div class="dday soon">D-Day</div><div class="schedule-text">쇼핑탭 TF 미팅<div class="schedule-date">매주 화 · 금 오전 10시 🔁</div></div></div>
       <div class="schedule-item"><div class="dday">D-5</div><div class="schedule-text">Vertical UX 점심 회식<div class="schedule-date">3/25 (수)</div></div></div>
       <div class="schedule-item"><div class="dday">D-6</div><div class="schedule-text">파이썬 교육 1차 · 14:00~17:00<div class="schedule-date">3/26 (목)</div></div></div>
       <div class="schedule-item"><div class="dday">D-13</div><div class="schedule-text">파이썬 교육 2차 · 14:00~17:00<div class="schedule-date">4/2 (목)</div></div></div>
