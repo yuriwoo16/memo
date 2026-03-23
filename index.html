@@ -97,17 +97,17 @@
     <h1>유리우 업무</h1>
 
     <div class="summary">
-      <div class="section-title">📌 오늘 요약 · 2026-03-20</div>
-      <div class="summary-item"><span class="badge-dday">D-Day</span><span class="summary-content">쇼핑탭 TF 미팅 오늘! (금 오전 10시)</span></div>
+      <div class="section-title" id="summary-title">📌 오늘 요약</div>
+      <div id="summary-today"></div>
     </div>
 
     <div class="section">
       <div class="section-title">📅 일정</div>
-      <div class="schedule-item"><div class="dday soon">D-Day</div><div class="schedule-text">쇼핑탭 TF 미팅<div class="schedule-date">매주 화 · 금 오전 10시 🔁</div></div></div>
-      <div class="schedule-item"><div class="dday">D-5</div><div class="schedule-text">Vertical UX 점심 회식<div class="schedule-date">3/25 (수)</div></div></div>
-      <div class="schedule-item"><div class="dday">D-6</div><div class="schedule-text">파이썬 교육 1차 · 14:00~17:00<div class="schedule-date">3/26 (목)</div></div></div>
-      <div class="schedule-item"><div class="dday">D-13</div><div class="schedule-text">파이썬 교육 2차 · 14:00~17:00<div class="schedule-date">4/2 (목)</div></div></div>
-      <div class="schedule-item"><div class="dday">D-34</div><div class="schedule-text">쇼핑탭 개발팀과의 저녁 회식<div class="schedule-date">4/23 (목)</div></div></div>
+      <div class="schedule-item" data-recurring="2,5"><div class="dday"></div><div class="schedule-text">쇼핑탭 TF 미팅<div class="schedule-date">매주 화 · 금 오전 10시 🔁</div></div></div>
+      <div class="schedule-item" data-date="2026-03-25"><div class="dday"></div><div class="schedule-text">Vertical UX 점심 회식<div class="schedule-date">3/25 (수)</div></div></div>
+      <div class="schedule-item" data-date="2026-03-26"><div class="dday"></div><div class="schedule-text">파이썬 교육 1차 · 14:00~17:00<div class="schedule-date">3/26 (목)</div></div></div>
+      <div class="schedule-item" data-date="2026-04-02"><div class="dday"></div><div class="schedule-text">파이썬 교육 2차 · 14:00~17:00<div class="schedule-date">4/2 (목)</div></div></div>
+      <div class="schedule-item" data-date="2026-04-23"><div class="dday"></div><div class="schedule-text">쇼핑탭 개발팀과의 저녁 회식<div class="schedule-date">4/23 (목)</div></div></div>
     </div>
 
     <div class="section">
@@ -163,7 +163,7 @@
       <div class="idea-item"><span class="idea-date">3/19</span><span class="idea-text">Opus 4.6 / Codex / Open Claw / Claude Code</span></div>
     </div>
 
-    <p class="footer">업데이트 · 2026-03-20 (일정 추가)</p>
+    <p class="footer" id="footer-date">업데이트 · 2026-03-23</p>
     <p class="hint">입력: 아이디어: · 할일: · 급!할일: · 완료: · 일정: · 회의: &nbsp;|&nbsp; 마감 ~날짜 · 우선순위 [상/중/하]</p>
   </div>
 
@@ -173,6 +173,79 @@
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
+
+    function updateDdays() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // 날짜 포맷 helper
+      const pad = n => String(n).padStart(2, '0');
+      const todayStr = today.getFullYear() + '-' + pad(today.getMonth()+1) + '-' + pad(today.getDate());
+
+      // 요약 제목 날짜 업데이트
+      const summaryTitle = document.getElementById('summary-title');
+      if (summaryTitle) summaryTitle.textContent = '📌 오늘 요약 · ' + todayStr;
+
+      // D-day 뱃지 렌더링
+      function renderDday(ddayEl, diff) {
+        ddayEl.className = 'dday';
+        if (diff === 0) {
+          ddayEl.textContent = 'D-Day';
+          ddayEl.classList.add('soon');
+        } else if (diff > 0) {
+          ddayEl.textContent = 'D-' + diff;
+          if (diff <= 3) ddayEl.classList.add('soon');
+        } else {
+          ddayEl.textContent = 'D+' + Math.abs(diff);
+          ddayEl.style.opacity = '0.35';
+        }
+      }
+
+      // 일반 날짜 아이템
+      document.querySelectorAll('.schedule-item[data-date]').forEach(item => {
+        const [y, m, d] = item.dataset.date.split('-').map(Number);
+        const target = new Date(y, m - 1, d);
+        const diff = Math.round((target - today) / 86400000);
+        renderDday(item.querySelector('.dday'), diff);
+      });
+
+      // 반복 아이템 (data-recurring: 요일 번호 쉼표 구분, 0=일 1=월 2=화 ... 6=토)
+      document.querySelectorAll('.schedule-item[data-recurring]').forEach(item => {
+        const days = item.dataset.recurring.split(',').map(Number);
+        let nextDate = null;
+        for (let i = 0; i <= 7; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          if (days.includes(d.getDay())) { nextDate = d; break; }
+        }
+        if (nextDate) {
+          const diff = Math.round((nextDate - today) / 86400000);
+          renderDday(item.querySelector('.dday'), diff);
+        }
+      });
+
+      // 오늘 D-Day 일정 요약 표시
+      const todayEvents = [];
+      document.querySelectorAll('.schedule-item').forEach(item => {
+        const ddayEl = item.querySelector('.dday');
+        if (ddayEl && ddayEl.textContent === 'D-Day') {
+          const textEl = item.querySelector('.schedule-text');
+          if (textEl) todayEvents.push(textEl.childNodes[0].textContent.trim());
+        }
+      });
+
+      const summaryToday = document.getElementById('summary-today');
+      if (summaryToday) {
+        if (todayEvents.length > 0) {
+          summaryToday.innerHTML = todayEvents.map(e =>
+            '<div class="summary-item"><span class="badge-dday">D-Day</span><span class="summary-content">' + e + ' 오늘!</span></div>'
+          ).join('');
+        } else {
+          summaryToday.innerHTML = '<div class="summary-content" style="color:#48484a;margin-top:6px;">오늘 예정 일정 없음</div>';
+        }
+      }
+    }
+
     async function checkPw() {
       const input = document.getElementById('pw-input').value;
       const h = await hashPw(input);
@@ -180,6 +253,7 @@
         document.getElementById('lock-screen').style.display = 'none';
         document.getElementById('content').style.display = 'block';
         sessionStorage.setItem('unlocked', '1');
+        updateDdays();
       } else {
         document.getElementById('pw-error').style.display = 'block';
         document.getElementById('pw-input').value = '';
@@ -189,6 +263,7 @@
     if (sessionStorage.getItem('unlocked') === '1') {
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('content').style.display = 'block';
+      updateDdays();
     }
   </script>
 </body>
